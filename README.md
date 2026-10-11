@@ -1,77 +1,51 @@
 # macosterminalextended
 
-**Extended Terminal** — дополнение для стандартного терминала macOS.
+**Extended Terminal** adds copy on selection, keyboard shortcuts, and a complete dark profile to Apple's Terminal.app. It runs in the background without a menu bar or Dock icon.
 
-[Скачать установочный pkg](https://github.com/amstel8/macosterminalextended/releases/latest)
+[Download the installer](https://github.com/amstel8/macosterminalextended/releases/latest) · [Installation](docs/INSTALLATION.md) · [Usage and troubleshooting](docs/USAGE.md)
 
-Фоновое дополнение для стандартного Terminal.app на macOS 12 и новее.
-Без значка в строке меню и Dock.
+## Features
 
-- Автоматически копирует выделение после отпускания мыши.
-- Ctrl + ← / → переключает вкладки через штатные Ctrl + Shift + Tab / Ctrl + Tab.
-- ⌘ + ← / → передаёт Ctrl + A / Ctrl + E для начала/конца строки.
-- Копирование и сочетания действуют только при активном Terminal.
-- Включает текущий профиль iTerm Dark: Monaco 12, фон, выделение, курсор,
-  обычный и жирный текст, 16 ANSI-цветов и остальные параметры профиля.
+- Copy selected text when you release the mouse.
+- **Control + Left / Right** switches to the previous / next tab.
+- **Command + Left / Right** moves to the beginning / end of the shell input line.
+- Copying and shortcuts only apply while Terminal.app is active.
+- Includes the iTerm Dark profile with **Monaco 12**, selection and cursor colors, background, text colors, and the full 16-color ANSI palette.
+- Includes login startup, a settings window, and a backup before applying the theme.
 
-## Установка
+## Install
 
-Скачайте `macosterminalextended-0.2.0.pkg` из Releases и откройте его.
-Приложение устанавливается в `/Applications/Extended Terminal.app`.
-Для текущего пользователя создаётся
-`~/Library/LaunchAgents/dev.local.ExtendedTerminal.plist` для запуска при входе.
+Download `macosterminalextended-0.2.0.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and run it. The universal application supports **Intel and Apple Silicon on macOS 12 or later**.
 
-Разрешите Extended Terminal в «Системные настройки → Защита и безопасность →
-Конфиденциальность → Универсальный доступ». Для применения темы разрешите
-управление Terminal в разделе «Автоматизация». Разрешения выдаются средствами macOS.
+Grant **Accessibility** access to Extended Terminal. Allow it to control Terminal under **Automation** to apply the theme. macOS requires you to grant these permissions yourself.
 
-Настройки открываются ручным запуском Extended Terminal из «Программ».
-Закрытие окна оставляет приложение работать в фоне. Можно отдельно отключить
-копирование, сочетания клавиш и автозапуск, применить тему повторно или выйти.
+Open **Extended Terminal** from Applications or Spotlight to access settings. Closing the settings window leaves the background service running.
 
-Тема применяется к открытым вкладкам и становится профилем для новых окон.
-Terminal может добавить числовой суффикс к имени уже существующего профиля.
-Перед применением сохраняется резервная копия настроек профилей в
-`~/Library/Application Support/Extended Terminal/Backups/`.
-Monaco встроен в macOS; файл шрифта не устанавливается.
+If a **TC** icon remains in the menu bar, the early **Terminal Copy on Select** prototype is still running. Quit it from its menu; the installed Extended Terminal does not create this icon.
 
-## Проверка
+See the [installation guide](docs/INSTALLATION.md) for permissions, upgrades, installed files, and removal.
 
-Перейдите в Terminal, подождите полсекунды, выделите текст, отпустите мышь
-и проверьте вставку в TextEdit. Откройте две вкладки и проверьте Ctrl + стрелки.
-Для ⌘ + стрелок наберите строку на приглашении zsh/bash в стандартном режиме
-редактирования. Внутри vim и других программ Ctrl + A / E имеют собственное значение.
+## Build
 
-Выделение проверяется раз в 150 мс. Очень короткое выделение может быть пропущено.
-Активация окна со старым выделением не перезаписывает буфер. Одинаковый текст
-подряд без замеченного снятия выделения повторно не копируется.
-Если tmux/vim перехватывает мышь, используйте выделение Terminal с Option.
-Текст не сохраняется в журналы и не отправляется по сети.
-
-## Сборка
-
-Нужны Xcode Command Line Tools. Сторонних зависимостей нет.
+Requires Xcode Command Line Tools. No third-party dependencies.
 
 ```sh
-zsh build.sh        # текущая архитектура
-zsh build-pkg.sh    # universal pkg: Intel и Apple Silicon
+zsh build.sh        # Application for the current architecture
+zsh build-pkg.sh    # Universal installer for Intel and Apple Silicon
 ```
 
-При сборке выполняются 11 проверок логики копирования и 8 проверок преобразований
-клавиш. GUI-проверка требует разрешения Accessibility.
-Пакет локальный, без подписи Developer ID и нотарификации.
-Идентификатор приложения сохранён от первой версии для обновления прототипа.
+The application is built under `build/Extended Terminal.app`. The installer and its SHA-256 checksum are written to `dist/`.
 
-Диагностика AXSelectedText без вывода самого текста:
+The build runs 11 selection checks and 8 shortcut mapping checks. GUI behavior requires Accessibility access. The package is locally built, without a Developer ID signature or notarization.
 
-```sh
-"build/Extended Terminal.app/Contents/MacOS/TerminalCopyOnSelect" --probe
-```
+The application's bundle identifier is retained from the initial prototype for upgrade compatibility.
 
-При прямом запуске бинарника разрешение может относиться к запускающему терминалу.
+## Limits
 
-## Удаление
+Selection is checked every 150 ms. Very brief selections may be missed. Returning to Terminal with an existing selection does not overwrite the clipboard.
 
-Отключите запуск при входе, завершите приложение через его настройки и удалите
-`/Applications/Extended Terminal.app`. Профиль останется в Terminal; прежний можно
-выбрать в его настройках. Резервные копии находятся по пути выше.
+Command + arrow shortcuts send Control + A / E. They target standard zsh/bash command editing; applications such as vim define their own behavior for these keys.
+
+Selection text is not written to logs or sent over the network.
+
+See [usage and troubleshooting](docs/USAGE.md) and the [changelog](CHANGELOG.md).

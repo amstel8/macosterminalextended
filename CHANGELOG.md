@@ -2,12 +2,12 @@
 
 ## 0.2.0
 
-- Фоновое приложение Extended Terminal без значка в строке меню и Dock.
-- Автоматическое копирование выделенного текста из активного Terminal.app.
-- Ctrl + ← / → переключает вкладки.
-- ⌘ + ← / → переводит курсор в начало/конец строки оболочки.
-- Установочный pkg для Intel и Apple Silicon, macOS 12 и новее.
-- Тема iTerm Dark с Monaco 12 и полным набором цветов профиля.
-- Применение темы к открытым вкладкам, новым и стартовым окнам.
-- Резервная копия настроек темы перед применением.
-- Автозапуск при входе и отдельное окно настроек.
+- Background Extended Terminal application without a menu bar or Dock icon.
+- Automatic copying of selections from the active Terminal.app.
+- Control + Left / Right for tab navigation.
+- Command + Left / Right for shell input line navigation.
+- Universal installer for Intel and Apple Silicon, macOS 12 and later.
+- Complete iTerm Dark profile with Monaco 12 and all profile colors.
+- Theme application to open tabs, new windows, and startup windows.
+- Theme settings backup before applying a profile.
+- Login startup and a dedicated settings window.

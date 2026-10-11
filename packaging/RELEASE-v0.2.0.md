@@ -1,32 +1,29 @@
-Первый публичный релиз Extended Terminal для macOS 12 Monterey и новее.
+First public release of Extended Terminal for macOS 12 Monterey and later.
 
-### Возможности
+## Features
 
-- Копирование выделенного текста после отпускания мыши.
-- Ctrl + ← / → — предыдущая/следующая вкладка Terminal.
-- ⌘ + ← / → — начало/конец строки оболочки.
-- Полный профиль iTerm Dark: Monaco 12, фон, выделение, курсор и ANSI-палитра.
-- Фоновая работа без значка в верхней панели и Dock.
-- Автозапуск, настройки и резервное копирование прежней темы.
+- Copy selected text when you release the mouse.
+- Control + Left / Right: previous / next Terminal tab.
+- Command + Left / Right: beginning / end of the shell input line.
+- Complete iTerm Dark profile with Monaco 12, background, selection, cursor, and ANSI colors.
+- Background operation without a menu bar or Dock icon.
+- Login startup, settings, and a backup before applying the theme.
 
-### Установка
+## Installation
 
-Скачайте **macosterminalextended-0.2.0.pkg** и установите его.
-Пакет содержит универсальное приложение для Intel и Apple Silicon.
-Разрешите Extended Terminal «Универсальный доступ» и управление Terminal
-в разделе «Автоматизация» для применения темы.
-Настройки открываются запуском Extended Terminal из «Программ».
+Download and run **macosterminalextended-0.2.0.pkg**. It includes a universal application for Intel and Apple Silicon.
 
-Пакет собран локально, без Developer ID и нотарификации.
-Контрольная сумма приложена в SHA256SUMS.
+Grant Extended Terminal **Accessibility** access and allow it to control Terminal under **Automation** to apply the theme. Open Extended Terminal from Applications to access settings.
 
-### Проверки
+See the [installation guide](https://github.com/amstel8/macosterminalextended/blob/main/docs/INSTALLATION.md) and [usage guide](https://github.com/amstel8/macosterminalextended/blob/main/docs/USAGE.md).
 
-- 11 проверок логики выделения и 8 проверок преобразования сочетаний.
-- Проверены обе архитектуры, подпись приложения, структура pkg и установочный скрипт.
-- Все 35 параметров темы совпадают с исходным профилем Terminal.
-- Копирование проверено пользователем на macOS 12.7.6; клавиатурные сочетания
-  требуют проверки в живом Terminal после выдачи разрешений.
+The package is locally built without Developer ID signing or notarization. The SHA-256 checksum is attached as **SHA256SUMS**.
 
-⌘ + стрелки передают Ctrl + A / E: их поведение внутри vim и других программ
-определяется самими программами.
+## Validation
+
+- 11 selection logic checks and 8 keyboard mapping checks.
+- Both architectures, application signature, installer contents, and script syntax checked.
+- All 35 theme settings match the original Terminal profile.
+- Copying confirmed by the user on macOS 12.7.6; keyboard shortcuts require a live Terminal check after granting access.
+
+Command + arrow shortcuts send Control + A / E. Applications such as vim define their own behavior for these keys.
