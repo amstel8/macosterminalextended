@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+target_volume="${3:-/}"
+# A package installed to another volume will initialize on its first manual launch.
+[ "$target_volume" = "/" ] || exit 0
+console_user=$(/usr/bin/stat -f '%Su' /dev/console)
+case "$console_user" in root|loginwindow|_mbsetupuser|'') exit 0 ;; esac
+console_uid=$(/usr/bin/id -u "$console_user")
+user_home=$(/usr/bin/dscl . -read "/Users/$console_user" NFSHomeDirectory | /usr/bin/sed 's/^NFSHomeDirectory: //')
+[ -d "$user_home" ] || exit 0
+agents_dir="$user_home/Library/LaunchAgents"
+/usr/bin/sudo -u "$console_user" /bin/mkdir -p "$agents_dir"
+agent="$agents_dir/dev.local.ExtendedTerminal.plist"
+/usr/bin/sudo -u "$console_user" /usr/bin/tee "$agent" > /dev/null <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>Label</key><string>dev.local.ExtendedTerminal</string>
+<key>ProgramArguments</key><array>
+<string>/Applications/Extended Terminal.app/Contents/MacOS/TerminalCopyOnSelect</string>
+<string>--background</string>
+</array>
+<key>RunAtLoad</key><true/>
+</dict></plist>
+PLIST
+/usr/bin/sudo -u "$console_user" /bin/chmod 644 "$agent"
+# Launch as the logged-in user; never request Accessibility as root.
+if ! /bin/launchctl asuser "$console_uid" /usr/bin/sudo -u "$console_user" /usr/bin/open -n '/Applications/Extended Terminal.app' --args --background --apply-theme; then
+    /usr/bin/logger -t ExtendedTerminal 'Installed; launch Extended Terminal manually to finish setup.'
+fi
+exit 0
