@@ -52,10 +52,16 @@ func selectedText(in root: AXUIElement) -> String? {
 }
 
 func shortcut(key: Int64, flags: CGEventFlags) -> (Int64, CGEventFlags)? {
-    guard key == 123 || key == 124 else { return nil }
+    guard [123, 124, 125, 126].contains(key) else { return nil }
     let modifiers: CGEventFlags = [.maskCommand, .maskControl, .maskShift, .maskAlternate]
     let pressed = flags.intersection(modifiers)
     let remaining = flags.subtracting(modifiers)
+    if key == 125 || key == 126 {
+        if pressed == .maskControl || pressed == [.maskControl, .maskShift] {
+            return (key == 126 ? 115 : 119, remaining.union(pressed))
+        }
+        return nil
+    }
     if pressed == .maskControl {
         return (key == 123 ? 0 : 14, remaining.union(.maskControl))
     }
@@ -79,6 +85,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), 0.08)
+        // An upgrade at the same location must not leave multiple service copies.
+        for other in NSRunningApplication.runningApplications(withBundleIdentifier: "dev.local.TerminalCopyOnSelect")
+            where other.processIdentifier != ProcessInfo.processInfo.processIdentifier && other.bundleURL?.path == Bundle.main.bundlePath {
+            other.terminate()
+        }
         timer = Timer(timeInterval: 0.15, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
         timer?.tolerance = 0.04
         RunLoop.main.add(timer!, forMode: .common)
@@ -292,7 +303,11 @@ func selfTest() {
     precondition(shortcut(key: 123, flags: [.maskCommand, .maskShift]) == nil)
     precondition(shortcut(key: 123, flags: .maskAlternate) == nil)
     precondition(shortcut(key: 0, flags: .maskCommand) == nil)
-    print("Keyboard mappings: 9 checks passed.")
+    precondition(shortcut(key: 126, flags: .maskControl)?.0 == 115)
+    precondition(shortcut(key: 125, flags: .maskControl)?.0 == 119)
+    precondition(shortcut(key: 126, flags: [.maskControl, .maskShift])?.1 == [.maskControl, .maskShift])
+    precondition(shortcut(key: 125, flags: [.maskControl, .maskShift])?.0 == 119)
+    print("Keyboard mappings: 13 checks passed.")
 }
 
 if CommandLine.arguments.contains("--self-test") { selfTest(); exit(0) }

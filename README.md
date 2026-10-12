@@ -4,14 +4,18 @@
 
 **Extended Terminal** adds copy on selection, keyboard navigation, Zsh selection, and a dark profile to Apple's Terminal.app.
 
-[Download the installer](https://github.com/amstel8/macosterminalextended/releases/latest) · [Installation](docs/INSTALLATION.md) · [Usage](docs/USAGE.md)
+[Download the installer](https://github.com/amstel8/macosterminalextended/releases/latest) · [Features](docs/FEATURES.md) · [Installation](docs/INSTALLATION.md) · [Usage](docs/USAGE.md)
 
 ## Features
 
 - Mouse selection is copied when you release the button.
 - **Control + Left / Right** moves to the start / end of the shell input line.
+- **Control + Up / Down** moves to the beginning / end of the entire multiline input.
+- **Option + Left / Right** moves backward / forward by words.
 - **Option + Shift + Left / Right** selects words in Zsh.
 - **Control + Shift + Left / Right** selects to the start / end of the Zsh input line.
+- **Control + Shift + Up / Down** selects to the beginning / end of the entire Zsh input.
+- **Shift + Enter** inserts a newline into the Zsh input buffer without submitting it.
 - Keyboard selections are copied too; Backspace/Delete removes the selected region.
 - Command + arrow shortcuts retain Terminal's native behavior.
 - Settings live in the **Extended Terminal** pane in Monterey's System Preferences.
@@ -20,7 +24,7 @@
 
 ## Install
 
-Download `macosterminalextended-0.3.1.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest). The package includes universal binaries for Intel and Apple Silicon. System Preferences integration is validated on **macOS 12 Monterey**; newer versions are not validated.
+Download `macosterminalextended-0.3.2.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest). The package includes universal binaries for Intel and Apple Silicon. System Preferences integration is validated on **macOS 12 Monterey**; newer versions are not validated.
 
 Open **System Preferences → Extended Terminal**. Grant Accessibility access to the hidden helper, and allow control of Terminal under Automation to apply the theme. Open a **new Zsh tab** after installation to load keyboard selection.
 
@@ -38,7 +42,7 @@ zsh build-pkg.sh
 
 The installer and SHA-256 checksum are written to `dist/`. The background helper and preference pane are built under `build/`.
 
-The build runs 11 selection checks and 9 shortcut checks. The PTY test exercises actual Zsh word and line selection, extension, shrinkage, and deselection. The package is locally built without Developer ID signing or notarization.
+The build runs 11 selection checks and 13 shortcut checks. The PTY test exercises actual Zsh word and line selection, extension, shrinkage, and deselection. The package is locally built without Developer ID signing or notarization.
 
 ## Limits
 

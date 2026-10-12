@@ -8,7 +8,7 @@
 
 ## Install
 
-1. Download `macosterminalextended-0.3.1.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and complete the installer.
+1. Download `macosterminalextended-0.3.2.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and complete the installer.
 2. Open **System Preferences → Extended Terminal**.
 3. Use **Grant Accessibility** to reveal the hidden helper and open permission settings.
 4. Unlock **Security & Privacy → Privacy → Accessibility**. Add the revealed **Extended Terminal.app** and enable its checkbox.

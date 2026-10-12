@@ -38,9 +38,9 @@ static NSString * const Helper = @"/Library/Application Support/Extended Termina
     [self label:@"Extended Terminal" frame:NSMakeRect(24, 339, 570, 30) font:[NSFont boldSystemFontOfSize:23]];
     self.statusLabel = [self label:@"Checking service…" frame:NSMakeRect(24, 305, 570, 24) font:nil];
     self.copyingButton = [self check:@"Copy selected text automatically" tag:0 y:266];
-    self.keysButton = [self check:@"Enable Control + arrows and keyboard selection" tag:1 y:230];
+    self.keysButton = [self check:@"Enable keyboard navigation, selection and multiline input" tag:1 y:230];
     self.loginButton = [self check:@"Start automatically at login" tag:2 y:194];
-    [self label:@"Ctrl + ←/→: start/end of line\nAlt + Shift + ←/→: select words\nCtrl + Shift + ←/→: select to start/end of line" frame:NSMakeRect(42, 111, 540, 74) font:[NSFont systemFontOfSize:12]];
+    [self label:@"Ctrl + ←/→: line edges; Ctrl + ↑/↓: entire input\nAlt + ←/→: words; Shift + Enter: newline\nAdd Shift to arrows to select words, a line, or the entire input" frame:NSMakeRect(42, 111, 540, 74) font:[NSFont systemFontOfSize:12]];
     [self button:@"Grant Accessibility…" action:@selector(access:) frame:NSMakeRect(24, 61, 220, 32)];
     [self button:@"Apply Terminal theme" action:@selector(theme:) frame:NSMakeRect(254, 61, 220, 32)];
     [self button:@"Start service" action:@selector(start:) frame:NSMakeRect(24, 15, 160, 32)];
