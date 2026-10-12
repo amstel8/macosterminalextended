@@ -25,6 +25,7 @@ agent="$agents_dir/dev.local.ExtendedTerminal.plist"
 PLIST
 /usr/bin/sudo -u "$console_user" /bin/chmod 644 "$agent"
 # Launch as the logged-in user; never request Accessibility as root.
+/bin/launchctl asuser "$console_uid" /usr/bin/sudo -u "$console_user" /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f '/Library/Application Support/Extended Terminal/Extended Terminal.app'
 shell_rc="$user_home/.zshrc"
 /usr/bin/sudo -u "$console_user" /bin/sh -s -- "$shell_rc" <<'SHELL_SETUP'
 rc_path=$1

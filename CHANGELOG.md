@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+- Grant Accessibility now requests permission through the running helper.
+- Added explicit manual-add instructions for background services missing from the Accessibility list.
+- Register the hidden helper with Launch Services during installation.
+- Added a generated neon-green gear over a terminal icon to the helper and preference pane.
+
 ## 0.3.0
 
 - Control + arrows now moves to the beginning/end of the input line.

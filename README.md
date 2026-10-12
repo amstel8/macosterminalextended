@@ -1,5 +1,7 @@
 # macosterminalextended
 
+<img src="Assets/ExtendedTerminal.png" width="128" alt="Extended Terminal icon">
+
 **Extended Terminal** adds copy on selection, keyboard navigation, Zsh selection, and a dark profile to Apple's Terminal.app.
 
 [Download the installer](https://github.com/amstel8/macosterminalextended/releases/latest) · [Installation](docs/INSTALLATION.md) · [Usage](docs/USAGE.md)
@@ -18,7 +20,7 @@
 
 ## Install
 
-Download `macosterminalextended-0.3.0.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest). The package includes universal binaries for Intel and Apple Silicon. System Preferences integration is validated on **macOS 12 Monterey**; newer versions are not validated.
+Download `macosterminalextended-0.3.1.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest). The package includes universal binaries for Intel and Apple Silicon. System Preferences integration is validated on **macOS 12 Monterey**; newer versions are not validated.
 
 Open **System Preferences → Extended Terminal**. Grant Accessibility access to the hidden helper, and allow control of Terminal under Automation to apply the theme. Open a **new Zsh tab** after installation to load keyboard selection.
 

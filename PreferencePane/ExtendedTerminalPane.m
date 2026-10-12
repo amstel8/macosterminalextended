@@ -121,7 +121,16 @@ static NSString * const Helper = @"/Library/Application Support/Extended Termina
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{ [self send:@"theme"]; });
 }
 - (void)access:(id)sender {
+    [self start:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{ [self send:@"access"]; });
     [[NSWorkspace sharedWorkspace] selectFile:Helper inFileViewerRootedAtPath:[Helper stringByDeletingLastPathComponent]];
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"]];
+    NSAlert *instructions = [NSAlert new];
+    instructions.messageText = @"Add the background helper to Accessibility";
+    instructions.informativeText = @"macOS may not add background services to the list automatically. Unlock Accessibility, click +, press Command + Shift + G, and paste:\n\n/Library/Application Support/Extended Terminal/Extended Terminal.app\n\nChoose Open and enable its checkbox. If an old Extended Terminal entry exists, remove it first. The helper has the green gear icon.";
+    [instructions addButtonWithTitle:@"Open Accessibility"];
+    [instructions addButtonWithTitle:@"Cancel"];
+    if ([instructions runModal] == NSAlertFirstButtonReturn) {
+        [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"]];
+    }
 }
 @end

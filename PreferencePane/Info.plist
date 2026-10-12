@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><dict>
-<key>CFBundleIdentifier</key><string>dev.local.ExtendedTerminal.preferences</string>
-<key>CFBundleName</key><string>Extended Terminal</string>
-<key>CFBundleExecutable</key><string>ExtendedTerminalPreferences</string>
-<key>CFBundlePackageType</key><string>BNDL</string>
-<key>CFBundleVersion</key><string>3</string>
-<key>NSPrincipalClass</key><string>ExtendedTerminalPane</string>
-<key>NSPrefPaneIconLabel</key><string>Extended Terminal</string>
-<key>NSPrefPaneIconFile</key><string>Terminal.png</string>
-</dict></plist>
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>dev.local.ExtendedTerminal.preferences</string>
+	<key>CFBundleName</key>
+	<string>Extended Terminal</string>
+	<key>CFBundleExecutable</key>
+	<string>ExtendedTerminalPreferences</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleVersion</key>
+	<string>4</string>
+	<key>NSPrincipalClass</key>
+	<string>ExtendedTerminalPane</string>
+	<key>NSPrefPaneIconLabel</key>
+	<string>Extended Terminal</string>
+	<key>NSPrefPaneIconFile</key>
+	<string>Terminal.png</string>
+</dict>
+</plist>

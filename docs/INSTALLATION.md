@@ -8,10 +8,14 @@
 
 ## Install
 
-1. Download `macosterminalextended-0.3.0.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and complete the installer.
+1. Download `macosterminalextended-0.3.1.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and complete the installer.
 2. Open **System Preferences → Extended Terminal**.
 3. Use **Grant Accessibility** to reveal the hidden helper and open permission settings.
 4. Unlock **Security & Privacy → Privacy → Accessibility**. Add the revealed **Extended Terminal.app** and enable its checkbox.
+   If it is not listed, click **+**, press **Command + Shift + G**, paste
+   `/Library/Application Support/Extended Terminal/Extended Terminal.app`,
+   choose **Open**, and enable the green-gear application's checkbox.
+   The macOS prompt does not guarantee automatic insertion into this list.
 5. Allow Extended Terminal to control Terminal under **Automation** to apply the theme.
 6. Open a new Zsh tab to load keyboard selection.
 
