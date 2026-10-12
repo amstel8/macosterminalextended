@@ -13,7 +13,15 @@ else
     xcrun swiftc -O -target "$build_arch-apple-macosx12.0" -framework AppKit -framework ApplicationServices Sources/main.swift -o "$app_path/Contents/MacOS/TerminalCopyOnSelect"
 fi
 cp Info.plist "$app_path/Contents/Info.plist"
-cp Resources/* "$app_path/Contents/Resources/"
+ditto Resources "$app_path/Contents/Resources"
 codesign --force --sign - --identifier dev.local.TerminalCopyOnSelect "$app_path"
 "$app_path/Contents/MacOS/TerminalCopyOnSelect" --self-test
 printf 'Built: %s\n' "$app_path"
+pane_path="$PWD/build/Extended Terminal.prefPane"
+mkdir -p "$pane_path/Contents/MacOS" "$pane_path/Contents/Resources"
+xcrun clang -fobjc-arc -bundle -arch x86_64 -arch arm64 -mmacosx-version-min=12.0 -framework Cocoa -framework PreferencePanes PreferencePane/ExtendedTerminalPane.m -o "$pane_path/Contents/MacOS/ExtendedTerminalPreferences"
+cp PreferencePane/Info.plist "$pane_path/Contents/Info.plist"
+xcrun swiftc PreferencePane/MakeIcon.swift -o build/make-pane-icon
+build/make-pane-icon "$pane_path/Contents/Resources/Terminal.png"
+codesign --force --sign - --identifier dev.local.ExtendedTerminal.preferences "$pane_path"
+zsh -n Resources/extended-terminal.zsh

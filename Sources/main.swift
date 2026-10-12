@@ -56,21 +56,17 @@ func shortcut(key: Int64, flags: CGEventFlags) -> (Int64, CGEventFlags)? {
     let modifiers: CGEventFlags = [.maskCommand, .maskControl, .maskShift, .maskAlternate]
     let pressed = flags.intersection(modifiers)
     let remaining = flags.subtracting(modifiers)
-    if pressed == .maskCommand {
-        return (key == 123 ? 0 : 14, remaining.union(.maskControl))
-    }
     if pressed == .maskControl {
-        return (48, remaining.union(key == 123 ? [.maskControl, .maskShift] : .maskControl))
+        return (key == 123 ? 0 : 14, remaining.union(.maskControl))
     }
     return nil
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    var controlsWindow: NSWindow?
-    var statusLabel: NSTextField?
     var eventTap: CFMachPort?
     var eventSource: CFRunLoopSource?
     var tapAttempted = false
+    var stoppedPreviousInstances = false
     var timer: Timer?
     var gate = SelectionGate()
     var enabled = UserDefaults.standard.object(forKey: "copyEnabled") as? Bool ?? true
@@ -83,11 +79,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), 0.08)
-        for other in NSRunningApplication.runningApplications(withBundleIdentifier: "dev.local.TerminalCopyOnSelect")
-            where other.processIdentifier != ProcessInfo.processInfo.processIdentifier { other.terminate() }
         timer = Timer(timeInterval: 0.15, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
         timer?.tolerance = 0.04
         RunLoop.main.add(timer!, forMode: .common)
+        DistributedNotificationCenter.default().addObserver(self, selector: #selector(preferencesChanged), name: NSNotification.Name("dev.local.ExtendedTerminal.preferencesChanged"), object: nil)
+        DistributedNotificationCenter.default().addObserver(self, selector: #selector(commandReceived(_:)), name: NSNotification.Name("dev.local.ExtendedTerminal.command"), object: nil)
         tick()
         if !CommandLine.arguments.contains("--background") { showSettings() }
         if !AXIsProcessTrusted() { requestAccess() }
@@ -102,75 +98,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    @objc func toggle(_ sender: NSButton) {
-        enabled = sender.state == .on
-        UserDefaults.standard.set(enabled, forKey: "copyEnabled")
+    @objc func preferencesChanged() {
+        UserDefaults.standard.synchronize()
+        enabled = UserDefaults.standard.object(forKey: "copyEnabled") as? Bool ?? true
+        shortcutsEnabled = UserDefaults.standard.object(forKey: "shortcutsEnabled") as? Bool ?? true
         gate.reset()
         updateStatus(trusted: AXIsProcessTrusted())
     }
 
-    @objc func toggleShortcuts(_ sender: NSButton) {
-        shortcutsEnabled = sender.state == .on
-        UserDefaults.standard.set(shortcutsEnabled, forKey: "shortcutsEnabled")
-    }
-
-    var loginURL: URL {
-        FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents/dev.local.ExtendedTerminal.plist")
-    }
-
-    @objc func toggleLogin(_ sender: NSButton) {
-        do {
-            if sender.state == .on {
-                try FileManager.default.createDirectory(at: loginURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-                let plist: [String: Any] = ["Label": "dev.local.ExtendedTerminal", "ProgramArguments": [Bundle.main.executableURL!.path, "--background"], "RunAtLoad": true]
-                try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: loginURL, options: .atomic)
-            } else if FileManager.default.fileExists(atPath: loginURL.path) {
-                try FileManager.default.removeItem(at: loginURL)
-            }
-        } catch { showError(error.localizedDescription) }
+    @objc func commandReceived(_ notification: Notification) {
+        switch notification.userInfo?["action"] as? String {
+        case "theme": applyTheme()
+        case "access": requestAccess()
+        case "quit": quitApp()
+        default: break
+        }
     }
 
     func showSettings() {
-        if controlsWindow == nil {
-            let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 510, height: 340), styleMask: [.titled, .closable], backing: .buffered, defer: false)
-            panel.title = "Extended Terminal"
-            panel.isReleasedWhenClosed = false
-            panel.center()
-            let content = panel.contentView!
-            let title = NSTextField(labelWithString: "Extended Terminal")
-            title.font = .boldSystemFont(ofSize: 22)
-            title.frame = NSRect(x: 24, y: 289, width: 460, height: 30)
-            content.addSubview(title)
-            let status = NSTextField(labelWithString: "")
-            status.frame = NSRect(x: 24, y: 253, width: 465, height: 25)
-            content.addSubview(status)
-            statusLabel = status
-            let copy = NSButton(checkboxWithTitle: "Копировать выделенный текст", target: self, action: #selector(toggle(_:)))
-            copy.state = enabled ? .on : .off
-            copy.frame = NSRect(x: 24, y: 216, width: 465, height: 25)
-            content.addSubview(copy)
-            let keys = NSButton(checkboxWithTitle: "Ctrl + ←/→: вкладки; ⌘ + ←/→: начало/конец строки", target: self, action: #selector(toggleShortcuts(_:)))
-            keys.state = shortcutsEnabled ? .on : .off
-            keys.frame = NSRect(x: 24, y: 182, width: 470, height: 25)
-            content.addSubview(keys)
-            let login = NSButton(checkboxWithTitle: "Запускать при входе в систему", target: self, action: #selector(toggleLogin(_:)))
-            login.state = FileManager.default.fileExists(atPath: loginURL.path) ? .on : .off
-            login.frame = NSRect(x: 24, y: 148, width: 465, height: 25)
-            content.addSubview(login)
-            let access = NSButton(title: "Разрешить доступ…", target: self, action: #selector(requestAccess))
-            access.frame = NSRect(x: 24, y: 98, width: 220, height: 32)
-            content.addSubview(access)
-            let theme = NSButton(title: "Применить тему Terminal", target: self, action: #selector(applyTheme))
-            theme.frame = NSRect(x: 260, y: 98, width: 226, height: 32)
-            content.addSubview(theme)
-            let quit = NSButton(title: "Завершить Extended Terminal", target: self, action: #selector(quitApp))
-            quit.frame = NSRect(x: 24, y: 31, width: 270, height: 32)
-            content.addSubview(quit)
-            controlsWindow = panel
-        }
-        updateStatus(trusted: AXIsProcessTrusted())
-        controlsWindow?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        NSWorkspace.shared.open(URL(fileURLWithPath: "/Library/PreferencePanes/Extended Terminal.prefPane"))
     }
 
     func showError(_ message: String) {
@@ -215,7 +161,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func updateStatus(trusted: Bool) {
-        statusLabel?.stringValue = !trusted ? "Нужен Универсальный доступ" : (eventTap == nil ? "Копирование доступно; клавиатура: нужен доступ" : "Работает в фоне, только в Terminal")
+        let directory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/Extended Terminal")
+        do {
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let status: [String: Any] = ["trusted": trusted, "keyboardTap": eventTap != nil, "copyEnabled": enabled, "shortcutsEnabled": shortcutsEnabled, "pid": ProcessInfo.processInfo.processIdentifier]
+            try PropertyListSerialization.data(fromPropertyList: status, format: .xml, options: 0).write(to: directory.appendingPathComponent("service-state.plist"), options: .atomic)
+        } catch { NSLog("Extended Terminal: could not write service status") }
     }
 
     func installKeyboardTap() {
@@ -246,7 +197,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func tick() {
         let trusted = AXIsProcessTrusted()
-        if trusted && eventTap == nil { installKeyboardTap(); updateStatus(trusted: trusted) }
+        // Keep the working previous build alive until this build has permission.
+        if trusted && !stoppedPreviousInstances {
+            for other in NSRunningApplication.runningApplications(withBundleIdentifier: "dev.local.TerminalCopyOnSelect")
+                where other.processIdentifier != ProcessInfo.processInfo.processIdentifier { other.terminate() }
+            stoppedPreviousInstances = true
+        }
+        if trusted && eventTap == nil && !tapAttempted { installKeyboardTap(); updateStatus(trusted: trusted) }
         if lastPermission != trusted { lastPermission = trusted; updateStatus(trusted: trusted) }
         guard trusted, enabled,
               let app = NSWorkspace.shared.frontmostApplication,
@@ -326,15 +283,16 @@ func selfTest() {
     precondition(gate.observe(context: "A", text: "new", dragging: false) == "new")
     precondition(gate.observe(context: "B", text: "another window", dragging: false) == nil)
     print("Selection gate: 11 checks passed.")
-    precondition(shortcut(key: 123, flags: .maskCommand)?.0 == 0)
-    precondition(shortcut(key: 124, flags: .maskCommand)?.0 == 14)
-    precondition(shortcut(key: 123, flags: .maskControl)?.0 == 48)
-    precondition(shortcut(key: 123, flags: .maskControl)?.1 == [.maskControl, .maskShift])
-    precondition(shortcut(key: 124, flags: .maskControl)?.1 == .maskControl)
+    precondition(shortcut(key: 123, flags: .maskCommand) == nil)
+    precondition(shortcut(key: 124, flags: .maskCommand) == nil)
+    precondition(shortcut(key: 123, flags: .maskControl)?.0 == 0)
+    precondition(shortcut(key: 124, flags: .maskControl)?.0 == 14)
+    precondition(shortcut(key: 123, flags: .maskControl)?.1 == .maskControl)
+    precondition(shortcut(key: 123, flags: [.maskControl, .maskShift]) == nil)
     precondition(shortcut(key: 123, flags: [.maskCommand, .maskShift]) == nil)
     precondition(shortcut(key: 123, flags: .maskAlternate) == nil)
     precondition(shortcut(key: 0, flags: .maskCommand) == nil)
-    print("Keyboard mappings: 8 checks passed.")
+    print("Keyboard mappings: 9 checks passed.")
 }
 
 if CommandLine.arguments.contains("--self-test") { selfTest(); exit(0) }

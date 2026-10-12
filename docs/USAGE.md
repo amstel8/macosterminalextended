@@ -1,58 +1,57 @@
 # Usage and troubleshooting
 
-## Settings and background operation
+## Settings
 
-Open **Extended Terminal** from Applications or Spotlight.
+Open **System Preferences → Extended Terminal** on Monterey.
 
-The settings window lets you independently enable copying, keyboard shortcuts, and login startup. It also provides buttons to apply the theme again, open permission settings, or quit.
+You can toggle mouse copying, keyboard shortcuts and selection, and login startup. Buttons grant Accessibility access, apply the theme, start the service, or stop it. The pane displays the service's permission status.
 
-Closing the window leaves the application running. Extended Terminal does not create a menu bar or Dock icon. Clipboard and keyboard actions only affect the active Terminal.app.
+No menu bar or Dock icon is created. The helper is stored under Library/Application Support.
 
-## Copy on selection
-
-Select text with the mouse and release the button. The text is copied to the system clipboard; paste normally with **Command + V**.
-
-Spaces and newlines are preserved. Empty selections and returning to Terminal with an existing selection do not overwrite the clipboard.
-
-Selection is checked every 150 ms. Very brief selections may be missed. To copy the same text again, clear the selection before selecting it again.
-
-## Keyboard shortcuts
+## Shortcuts
 
 | Shortcut | Action |
 | --- | --- |
-| Control + Left | Previous tab |
-| Control + Right | Next tab |
-| Command + Left | Beginning of the input line |
-| Command + Right | End of the input line |
+| Control + Left | Start of the input line |
+| Control + Right | End of the input line |
+| Option + Shift + Left / Right | Extend or shrink Zsh selection by words |
+| Control + Shift + Left / Right | Select to the start / end of the input line |
 
-Tab shortcuts send Terminal's standard Control + Shift + Tab / Control + Tab.
+Command + arrows and Command + Shift + arrows are passed through unchanged, preserving Terminal's native shortcuts.
 
-Line movement sends Control + A / Control + E and targets standard zsh/bash command editing. Inside vim and other programs, these keys follow the application's own bindings.
+Selection requires a new interactive Zsh tab after installation and the installed Terminal profile. It applies to the editable command line, not scrollback or full-screen programs. The selected region is highlighted by Zsh and copied to the system clipboard when automatic copying is enabled. Backspace or Delete removes the region; ordinary movement clears selection.
+
+Line movement sends Control + A / E. Applications such as vim define their own behavior for these keys.
+
+## Copying
+
+Mouse-select text and release the button, then paste with Command + V. Spaces and newlines are preserved. Empty selections and returning to an existing selection do not overwrite the clipboard.
+
+The helper checks mouse selection every 150 ms. Very brief selections can be missed. To copy identical text again, clear the selection before selecting it again.
 
 ## Quick check
 
 1. Activate Terminal and wait half a second.
-2. Select text, release the mouse, and paste it into TextEdit.
-3. Open two tabs and check Control + arrow navigation.
-4. Type a command without pressing Return and check Command + arrow movement.
+2. Mouse-select text, release, and paste into TextEdit.
+3. Open a new Zsh tab, type a command without Return, and try Control + arrows.
+4. Try Option + Shift + arrows and Control + Shift + arrows, then paste into TextEdit.
+5. Confirm Command + Shift + arrows still follow Terminal's native behavior.
 
 ## Troubleshooting
 
-- **Copying does not work:** check the copying toggle and Accessibility permission for the installed application. If necessary, remove the old permission entry and add `/Applications/Extended Terminal.app` again.
-- **tmux or vim captures mouse selection:** hold Option to use Terminal's native selection.
-- **Keyboard shortcuts do not work:** check the shortcuts toggle and permission status in the settings window. Restart Extended Terminal after granting access.
-- **Control + arrows switches desktops:** check for a conflict under system keyboard shortcuts → Mission Control. Disable those conflicting system shortcuts if macOS intercepts them.
-- **The theme was not applied:** allow control of Terminal under Automation, then use the apply-theme button in Extended Terminal's settings.
-- **The TC icon is still visible:** quit the old Terminal Copy on Select prototype using its menu.
+- **Copying stopped after an update:** remove the old Accessibility entry and add `/Library/Application Support/Extended Terminal/Extended Terminal.app` again using Grant Accessibility.
+- **Selection sequences appear as text:** open a new Zsh tab and apply the bundled Terminal profile. Keyboard selection is not installed into SSH hosts or other shells.
+- **tmux/vim captures mouse selection:** hold Option to use Terminal's native selection.
+- **Control + arrows switches desktops:** check Mission Control shortcuts if macOS intercepts them.
+- **The theme was not applied:** allow control of Terminal under Automation and use Apply Terminal theme.
+- **An old TC icon remains:** quit the early Terminal Copy on Select prototype from its menu.
 
-## Accessibility diagnostics
-
-The following prints whether Terminal exposes selected text, without printing the text itself:
+## Diagnostics
 
 ```sh
-"/Applications/Extended Terminal.app/Contents/MacOS/TerminalCopyOnSelect" --probe
+"/Library/Application Support/Extended Terminal/Extended Terminal.app/Contents/MacOS/TerminalCopyOnSelect" --probe
 ```
 
-When launched directly from a shell, Accessibility permission may belong to the launching terminal rather than the application. This check does not replace checking the installed application's permission.
+This reports Accessibility support without printing selected text. Direct shell launches can use the launching terminal's permission rather than the helper's permission.
 
 Selection text is not logged or sent over the network.

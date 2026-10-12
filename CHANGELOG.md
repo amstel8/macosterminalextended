@@ -1,13 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+- Control + arrows now moves to the beginning/end of the input line.
+- Removed all Command + arrow interception and the old Control + arrow tab mapping.
+- Added Option + Shift word selection and Control + Shift line selection in Zsh.
+- Keyboard selections are copied to the clipboard when copying is enabled.
+- Added a native System Preferences pane for Monterey.
+- Moved the background helper out of Applications and into Library/Application Support.
+- Added a backed-up, idempotent Zsh configuration source block.
+- Retained the existing theme colors and added four selection key sequences.
+
 ## 0.2.0
 
-- Background Extended Terminal application without a menu bar or Dock icon.
-- Automatic copying of selections from the active Terminal.app.
-- Control + Left / Right for tab navigation.
-- Command + Left / Right for shell input line navigation.
-- Universal installer for Intel and Apple Silicon, macOS 12 and later.
-- Complete iTerm Dark profile with Monaco 12 and all profile colors.
-- Theme application to open tabs, new windows, and startup windows.
-- Theme settings backup before applying a profile.
-- Login startup and a dedicated settings window.
+- Initial background helper, copy on selection, tab and line shortcuts.
+- Universal pkg, iTerm Dark profile, theme backup and login startup.
