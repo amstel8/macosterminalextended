@@ -1,5 +1,7 @@
 # Usage and troubleshooting
 
+[English](USAGE.md) · [Русский](ru/USAGE.md)
+
 ## Settings
 
 Open **System Preferences → Extended Terminal** on Monterey.
@@ -14,14 +16,22 @@ No menu bar or Dock icon is created. The helper is stored under Library/Applicat
 | --- | --- |
 | Control + Left | Start of the input line |
 | Control + Right | End of the input line |
+| Control + Up / Down | Beginning / end of the entire multiline input |
+| Option + Left / Right | Move backward / forward by words |
 | Option + Shift + Left / Right | Extend or shrink Zsh selection by words |
 | Control + Shift + Left / Right | Select to the start / end of the input line |
+| Control + Shift + Up / Down | Select to the beginning / end of the entire Zsh input |
+| Shift + Return / Enter | Insert a newline without submitting input |
 
 Command + arrows and Command + Shift + arrows are passed through unchanged, preserving Terminal's native shortcuts.
 
 Selection requires a new interactive Zsh tab after installation and the installed Terminal profile. It applies to the editable command line, not scrollback or full-screen programs. The selected region is highlighted by Zsh and copied to the system clipboard when automatic copying is enabled. Backspace or Delete removes the region; ordinary movement clears selection.
 
 Line movement sends Control + A / E. Applications such as vim define their own behavior for these keys.
+
+Shift + Enter requires the Zsh widget and bundled Terminal profile. It inserts a
+literal newline; ordinary Enter submits the buffer normally. Open a new Zsh tab
+after an update to load this widget.
 
 ## Copying
 

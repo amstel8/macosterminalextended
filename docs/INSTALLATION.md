@@ -1,5 +1,7 @@
 # Installation and upgrades
 
+[English](INSTALLATION.md) · [Русский](ru/INSTALLATION.md)
+
 ## Requirements
 
 - macOS 12 Monterey, Intel or Apple Silicon.
@@ -8,7 +10,7 @@
 
 ## Install
 
-1. Download `macosterminalextended-0.3.1.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and complete the installer.
+1. Download `macosterminalextended-0.3.2.pkg` from [Releases](https://github.com/amstel8/macosterminalextended/releases/latest) and complete the installer.
 2. Open **System Preferences → Extended Terminal**.
 3. Use **Grant Accessibility** to reveal the hidden helper and open permission settings.
 4. Unlock **Security & Privacy → Privacy → Accessibility**. Add the revealed **Extended Terminal.app** and enable its checkbox.
@@ -32,7 +34,7 @@ macOS requires you to grant permissions yourself. The package is not Developer I
 
 No app is installed into Applications. The helper is still an application bundle because macOS uses it as the identity for Accessibility permission.
 
-The iTerm Dark profile preserves Monaco 12 and the original profile colors. It additionally configures the four selection key sequences. The theme applies to open tabs and becomes the default for new and startup windows. Monaco is already included with macOS.
+The iTerm Dark profile preserves Monaco 12 and the original profile colors. It additionally configures key sequences for navigation, selection, and multiline input. The theme applies to open tabs and becomes the default for new and startup windows. Monaco is already included with macOS.
 
 The installer adds login startup and shell configuration for the signed-in user. Other users can enable startup from the preference pane; the shell source block must be added to their own Zsh configuration.
 

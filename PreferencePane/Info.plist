@@ -11,12 +11,14 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>5</string>
 	<key>NSPrincipalClass</key>
 	<string>ExtendedTerminalPane</string>
 	<key>NSPrefPaneIconLabel</key>
 	<string>Extended Terminal</string>
 	<key>NSPrefPaneIconFile</key>
 	<string>Terminal.png</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.3.2</string>
 </dict>
 </plist>
